@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 public class LongestWordMapper extends Mapper<LongWritable, Text, IntWritable, Text>{
 
     private Text word = new Text();
-    private IntWritable wordLength;
+    private IntWritable wordLengthNegative = new IntWritable();
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException{
@@ -20,8 +20,8 @@ public class LongestWordMapper extends Mapper<LongWritable, Text, IntWritable, T
 
         while (itr.hasMoreTokens()){
             word.set(itr.nextToken());
-            wordLength = new IntWritable(word.getLength());
-            context.write(wordLength, word);
+            wordLengthNegative.set(word.getLength()*(-1));
+            context.write(wordLengthNegative, word);
         }
 
     }
