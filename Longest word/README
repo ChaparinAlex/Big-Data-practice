@@ -1,0 +1,25 @@
+Longest word.
+
+This task is about searching the longest word/words from input data (text files). Required environment: Java 8, Hadoop ecosystem 
+(core, MapReduce, MRUnit, HDFS), Maven, Linux (Red Hat distributives). 
+
+To start executing please complete following steps:
+1. Build project and obtain *.jar file.
+2. Put this *.jar file together with input data files (*.txt and/or *.sh with text) into local directory on Linux.
+3. Go to this directory ("cd"-command via Linux terminal ).
+4. Type and invoke command:
+   4.1. "hadoop jar <jar_file_name>.jar <input_path> <output_path>" (for custom chosen i/o-directories);
+   4.2. "hadoop jar <jar_file_name>.jar" (i/o-directories will created automatically).
+5. Look at PC monitor and wait for results of MapReduce task (they should be appeared as soon as framework 
+completes its work).
+
+Note: 
+- you needn't copy input text files manually into HDFS directory;
+- don't worry about clogging your HDFS storage: program deletes i/o-directories before every invoking;
+- now you can use input data with 2 file formats (*.txt, *.sh); you can operate with all input files either the same format or 
+different (multiple inputs);
+- if you want to expand list of available input data you may do it manually through increasing set of file extensions at method 
+hdfsOperations.setUp(..) in LongestWord.java;
+- all output data is storing in HDFS corresponding directory and in "console_logs.log" file at your local folder on Linux until 
+the next program runs (data rewrites between invokings);
+- program show results at such format: "<maxLengthWord1>, <maxLengthWord2>, ...., <maxLengthWordn> lengthOfWord".
