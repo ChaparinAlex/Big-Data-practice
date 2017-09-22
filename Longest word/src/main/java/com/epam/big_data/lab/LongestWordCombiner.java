@@ -13,8 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
-  This tool removes duplicates and retains only the longest words for writing to context from input stream after mapper
-  processing.
+  This tool removes duplicates and retains only the longest words from input data for writing to context.
  */
 
 public class LongestWordCombiner extends Reducer<IntWritable, Text, IntWritable, Text> {

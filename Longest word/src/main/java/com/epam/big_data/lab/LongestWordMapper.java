@@ -16,10 +16,11 @@ public class LongestWordMapper extends Mapper<LongWritable, Text, IntWritable, T
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException{
 
-        StringTokenizer itr = new StringTokenizer(value.toString());
+        String delim = "[ .,:;!?+-*/%#~^\\=_<>()[]|\"@¿&“”€0123456789\t\n\f\r$]+";
+        StringTokenizer st = new StringTokenizer(value.toString(), delim);
 
-        while (itr.hasMoreTokens()){
-            word.set(itr.nextToken());
+        while (st.hasMoreTokens()){
+            word.set(st.nextToken());
             wordLengthNegative.set(word.getLength()*(-1));
             context.write(wordLengthNegative, word);
         }

@@ -6,7 +6,13 @@ import java.util.List;
 
 public class FileSystemOperations {
 
-    static List<File> getAllFilesWithExtension(String extension, String pathToDirectory){
+    private static PrintStream console;
+
+    public static PrintStream getConsole(){
+        return console;
+    }
+
+    static List<File> getAllFilesWithExtension(String pathToDirectory, String... extensions){
 
         File directory = new File(pathToDirectory);
         File[] fileList = directory.listFiles();
@@ -15,16 +21,16 @@ public class FileSystemOperations {
         }
         List<File> listOfFiles = new ArrayList<>();
         for(File file : fileList){
-            if(file.getName().endsWith(extension)){
-                listOfFiles.add(file);
+            for(String extension : extensions){
+                if(file.getName().endsWith(extension)){
+                    listOfFiles.add(file);
+                }
             }
         }
-
         return listOfFiles;
     }
 
     public static void executeCommand(String command) throws IOException, InterruptedException {
-        System.out.println("\nResults:");
         Process process = Runtime.getRuntime().exec(command);
         process.waitFor();
         BufferedReader readProc = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -44,6 +50,7 @@ public class FileSystemOperations {
         if(!file.exists()){
             file.createNewFile();
         }
+        console = System.out;
         FileOutputStream fos = new FileOutputStream(file);
         PrintStream ps = new PrintStream(fos);
         System.setOut(ps);

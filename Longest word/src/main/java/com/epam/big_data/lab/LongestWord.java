@@ -13,20 +13,19 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import java.util.List;
-
 public class LongestWord extends Configured implements Tool {
 
-    private static final String HDFS_RELATIVE_INPUT_PATH = "/longest_word/input";
-    private static final String HDFS_RELATIVE_OUTPUT_PATH = "/longest_word/output";
+    private static final String HDFS_RELATIVE_INPUT_PATH = "longest_word/input";
+    private static final String HDFS_RELATIVE_OUTPUT_PATH = "longest_word/output";
+
 
     public static void main(String[] args) throws Exception {
         FileSystemOperations.writeLogsToFile();
         if(args.length != 0 && args.length != 2){
-            System.out.println("To run the program please use following number of arguments: \n0 (only main class) - " +
+            System.out.println("To run the program please use following number of arguments: \n0 - " +
                     "your HDFS input and output directories will be created automatically and they will obtain the next " +
                     "paths: <hdfsHomeFolder>/longest_word/input and <hdfsHomeFolder>/longest_word/output;" +
-                    "\n2 (main class + i/o paths) - you must type input and output HDFS directories manually");
+                    "\n2 (i/o HDFS-paths) - you must type input and output HDFS directories manually");
             System.out.println("Your current arguments: ");
             for(String arg : args){
                 System.out.println(arg);
@@ -42,6 +41,9 @@ public class LongestWord extends Configured implements Tool {
             command = "hdfs dfs -cat " + args[1] + "/part-r*";
         }
         FileSystemOperations.executeCommand(command);
+        System.setOut(FileSystemOperations.getConsole());
+        System.out.println("Results of MapReduce task (content of file 'console_logs.log'):");
+        FileSystemOperations.executeCommand("cat console_logs.log");
         System.exit(res);
     }
 
@@ -55,11 +57,11 @@ public class LongestWord extends Configured implements Tool {
             hdfsInputFolder = args[0];
             hdfsOutputFolder = args[1];
         }else{
-            hdfsInputFolder = hdfsOperations.getHdfsHomeFolder() + HDFS_RELATIVE_INPUT_PATH;
-            hdfsOutputFolder = hdfsOperations.getHdfsHomeFolder() + HDFS_RELATIVE_OUTPUT_PATH;
+            hdfsInputFolder = hdfsOperations.getHdfsHomeFolder() + "/" + HDFS_RELATIVE_INPUT_PATH;
+            hdfsOutputFolder = hdfsOperations.getHdfsHomeFolder() + "/" + HDFS_RELATIVE_OUTPUT_PATH;
         }
 
-        hdfsOperations.setUp(".txt", new Path(hdfsInputFolder), new Path(hdfsOutputFolder));
+        hdfsOperations.setUp(new Path(hdfsInputFolder), new Path(hdfsOutputFolder), ".txt", ".sh");
 
         Job job = Job.getInstance(conf);
         job.setJarByClass(getClass());
@@ -76,7 +78,7 @@ public class LongestWord extends Configured implements Tool {
 
         job.setReducerClass(LongestWordReducer.class);
 
-        job.setOutputKeyClass(List.class);
+        job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
 
         return job.waitForCompletion(true) ? 0 : 1;

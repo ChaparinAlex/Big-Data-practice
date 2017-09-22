@@ -25,11 +25,14 @@ public class HDFSOperations {
         homeDir = hdfs.getHomeDirectory();
     }
 
-    public void setUp(String extension, Path hdfsInputFolderPath, Path hdfsOutputFolderPath) throws IOException {
-        copyFilesToHdfs(extension, hdfsInputFolderPath);
+    public void setUp(Path hdfsInputFolderPath, Path hdfsOutputFolderPath, String... extensions) throws IOException {
+        if(folderOrFileExists(hdfsInputFolderPath)){
+            deleteDirectory(hdfsInputFolderPath);
+        }
         if(folderOrFileExists(hdfsOutputFolderPath)){
             deleteDirectory(hdfsOutputFolderPath);
         }
+        copyFilesToHdfs(hdfsInputFolderPath, extensions);
     }
 
     public String getHdfsHomeFolder() throws IOException {
@@ -44,10 +47,10 @@ public class HDFSOperations {
         return hdfs.exists(path);
     }
 
-    private void copyFilesToHdfs(String extension, Path newFolderPath) throws IOException {
+    private void copyFilesToHdfs(Path newFolderPath, String... extensions) throws IOException {
 
         Path localDirectory = new Path(FileSystemOperations.getCurrentDirectory());
-        List<File> fileList = FileSystemOperations.getAllFilesWithExtension(extension, localDirectory.toString());
+        List<File> fileList = FileSystemOperations.getAllFilesWithExtension(localDirectory.toString(), extensions);
         if(fileList == null){
             return;
         }
