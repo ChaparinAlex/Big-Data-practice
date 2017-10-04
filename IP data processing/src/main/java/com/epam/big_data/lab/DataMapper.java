@@ -21,7 +21,7 @@ public class DataMapper extends Mapper<LongWritable, Text, Text, Text>{
             String line = st.nextToken().trim();
             String[] sections = line.split(" ");
             ipName.set(new Text(sections[0]));
-            bytesPerIP.set(new Text(sections[8]));
+            bytesPerIP.set(new Text(sections[9]));
             context.write(ipName, bytesPerIP);
         }
 
