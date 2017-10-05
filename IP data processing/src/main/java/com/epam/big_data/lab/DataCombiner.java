@@ -5,23 +5,19 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
 
-public class DataCombiner extends Reducer<Text, Text, Text, Text> {
+public class DataCombiner extends Reducer<Text, SumAndCountBytesData, Text, SumAndCountBytesData> {
 
     @Override
-    protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+    protected void reduce(Text key, Iterable<SumAndCountBytesData> values, Context context) throws IOException, InterruptedException {
 
-        int sumOfBytes = 0;
+        long sumOfBytes = 0;
         int quantity = 0;
-        for(Text bytesToText : values){
-            int bytes;
-            try{
-                bytes = Integer.parseInt(bytesToText.toString());
-            }catch (NumberFormatException e){
-                bytes = 0;
-            }
+        for(SumAndCountBytesData bytesInfo : values){
+            long bytes = bytesInfo.getSumOfBytes().get();
             sumOfBytes += bytes;
             quantity++;
         }
-        context.write(new Text(key), new Text(sumOfBytes + "," + quantity));
+        context.write(new Text(key), new SumAndCountBytesData(sumOfBytes, quantity));
+
     }
 }

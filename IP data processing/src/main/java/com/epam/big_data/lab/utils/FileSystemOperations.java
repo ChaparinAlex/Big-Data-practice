@@ -3,7 +3,9 @@ package com.epam.big_data.lab.utils;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FileSystemOperations {
 
@@ -32,6 +34,14 @@ public class FileSystemOperations {
 
     public static String getCurrentDirectory(){
         return System.getProperty("user.dir");
+    }
+
+    public static String getNameOfJarFile(){
+        List<File> fileList = getAllFiles(getCurrentDirectory());
+        fileList = fileList.stream().filter(file -> file.getName().endsWith(".jar")).collect(Collectors.toList());
+        Comparator<File> comparator = Comparator.comparing(File::lastModified);
+        fileList.sort(comparator.reversed());
+        return fileList.stream().limit(1).collect(Collectors.toList()).get(0).getName();
     }
 
 }
