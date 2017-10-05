@@ -1,0 +1,24 @@
+IP data processing.
+
+Input data for this task - logs with information of users' internet activities. Required environment: Java 8, Hadoop ecosystem 
+(core, MapReduce, MRUnit, HDFS), Maven, Linux (Red Hat distributives). 
+
+Program should run on Linux with HDFS preinstalled. 
+To start executing please complete following steps:
+1. Build project and get *.jar file.
+2. Put this *.jar file together with input data file (file "000000" with logs) into local directory on Linux.
+3. Go to this directory ("cd"-command via Linux terminal ).
+4. Type and invoke command:
+   4.1. "hadoop jar <jar_file_name>.jar <input_path> <output_path>" (for custom chosen i/o-directories);
+   4.2. "hadoop jar <jar_file_name>.jar" (i/o-directories will be created automatically).
+5. Wait for invitation to choose the way of storing output data (CSV file or Sequence file compressed with Snappy) and make your 
+choice.
+6. Look at PC monitor and wait for results of MapReduce task (they should be appeared as soon as framework 
+completes its work).
+
+Note: 
+- you needn't copy input data file manually into HDFS directory;
+- don't worry about clogging your HDFS storage: program deletes i/o-directories before every invoking;
+- all output data is storing in HDFS corresponding directory; text data is a content of "output.csv" file at your local folder on 
+Linux; all output data will be substituted with new ones after program runs repeatedly (data rewrites between invokings);
+- program will show results on the screen.
