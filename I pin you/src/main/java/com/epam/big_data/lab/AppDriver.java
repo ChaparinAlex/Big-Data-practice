@@ -4,7 +4,6 @@ import com.epam.big_data.lab.mappers.CityAndRegionMapper;
 import com.epam.big_data.lab.mappers.DataMapper;
 import com.epam.big_data.lab.utils.FileSystemOperations;
 import com.epam.big_data.lab.utils.HDFSOperations;
-import com.epam.big_data.lab.utils.KeyPartitioner;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -68,19 +67,21 @@ public class AppDriver extends Configured implements Tool {
         job.setJarByClass(getClass());
         job.setJobName("I pin you");
 
-        List<File> inputFileList = FileSystemOperations.getAllFiles(hdfsInputFolder);
+        List<String> inputFileList = hdfsOperations.getAllFileNamesFromDirectory(new Path(hdfsInputFolder));
         if(inputFileList != null && !inputFileList.isEmpty()){
-            for(File file : inputFileList){
-                if(file.getName().equals("region.en") || file.getName().equals("city.en")){
-                    MultipleInputs.addInputPath(job, new Path(hdfsInputFolder + "/" + file.getName()),
+            for(String fileName : inputFileList){
+                if(fileName.equals("region.en.txt") || fileName.equals("city.en.txt")){
+                    MultipleInputs.addInputPath(job, new Path(hdfsInputFolder + "/" + fileName),
                             TextInputFormat.class, CityAndRegionMapper.class);
                 }else{
-                    MultipleInputs.addInputPath(job, new Path(hdfsInputFolder + "/" + file.getName()),
+                    MultipleInputs.addInputPath(job, new Path(hdfsInputFolder + "/" + fileName),
                             TextInputFormat.class, DataMapper.class);
                 }
             }
         }
 
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Text.class);
 
         FileInputFormat.addInputPath(job, new Path(hdfsInputFolder));
         FileOutputFormat.setOutputPath(job, new Path(hdfsOutputFolder));
@@ -89,7 +90,7 @@ public class AppDriver extends Configured implements Tool {
 
         job.setReducerClass(DataReducer.class);
 
-        job.setPartitionerClass(KeyPartitioner.class);
+        //job.setPartitionerClass(KeyPartitioner.class);
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
