@@ -1,11 +1,13 @@
 package com.epam.big_data.lab.utils;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HDFSOperations {
@@ -28,6 +30,15 @@ public class HDFSOperations {
             deleteDirectory(hdfsOutputFolderPath);
         }
         copyFilesToHdfs(hdfsInputFolderPath);
+    }
+
+    public List<String> getAllFileNamesFromDirectory(Path pathToDirectory) throws IOException {
+        List<String> fileList = new ArrayList<>();
+        FileStatus[] fileStatus = hdfs.listStatus(pathToDirectory);
+        for(FileStatus status : fileStatus){
+            fileList.add(status.getPath().getName());
+        }
+        return fileList;
     }
 
     public String getHdfsHomeFolder() throws IOException {

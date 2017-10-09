@@ -1,6 +1,7 @@
 package com.epam.big_data.lab.mappers;
 
-import org.apache.hadoop.io.IntWritable;
+import com.epam.big_data.lab.utils.CustomKey;
+import eu.bitwalker.useragentutils.UserAgent;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -8,10 +9,10 @@ import org.apache.hadoop.mapreduce.Mapper;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-public class DataMapper extends Mapper<LongWritable, Text, IntWritable, Text>{
+public class DataMapper extends Mapper<LongWritable, Text, CustomKey, Text>{
 
     @Override
-    protected void map(LongWritable key, Text value, Mapper<LongWritable, Text, IntWritable, Text>.Context context)
+    protected void map(LongWritable key, Text value, Mapper<LongWritable, Text, CustomKey, Text>.Context context)
                                                                               throws IOException, InterruptedException{
 
         StringTokenizer st = new StringTokenizer(value.toString(), "\n");
@@ -28,23 +29,13 @@ public class DataMapper extends Mapper<LongWritable, Text, IntWritable, Text>{
             if(biddingPrice == null || biddingPrice <= 250){
                 continue;
             }
-            Integer cityId = null;
-            try{
-                cityId = Integer.parseInt(sections[7]);
-            }catch (NumberFormatException e){
-                e.printStackTrace();
-            }
-            if(cityId != null){
-                context.write(new IntWritable(cityId), new Text("1"));
+            String operatingSystemName = UserAgent.parseUserAgentString(sections[4]).getOperatingSystem().getName();
+            String cityId = sections[7];
+            if(!cityId.equals("null")){
+                context.write(new CustomKey(cityId, operatingSystemName), new Text("1"));
             }else{
-                Integer regionId;
-                try{
-                    regionId = Integer.parseInt(sections[6]);
-                }catch (NumberFormatException e){
-                    e.printStackTrace();
-                    regionId = 0;
-                }
-                context.write(new IntWritable(regionId), new Text("1"));
+                String regionId = sections[6];
+                context.write(new CustomKey(regionId, operatingSystemName), new Text("1"));
             }
 
         }
