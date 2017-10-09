@@ -4,6 +4,7 @@ import com.epam.big_data.lab.mappers.CityAndRegionMapper;
 import com.epam.big_data.lab.mappers.DataMapper;
 import com.epam.big_data.lab.utils.FileSystemOperations;
 import com.epam.big_data.lab.utils.HDFSOperations;
+import com.epam.big_data.lab.utils.KeyPartitioner;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -18,7 +19,6 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import java.io.File;
 import java.util.List;
 
 public class AppDriver extends Configured implements Tool {
@@ -90,7 +90,7 @@ public class AppDriver extends Configured implements Tool {
 
         job.setReducerClass(DataReducer.class);
 
-        //job.setPartitionerClass(KeyPartitioner.class);
+        job.setPartitionerClass(KeyPartitioner.class);
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
