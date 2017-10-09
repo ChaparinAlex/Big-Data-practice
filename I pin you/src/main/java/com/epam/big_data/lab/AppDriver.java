@@ -2,6 +2,7 @@ package com.epam.big_data.lab;
 
 import com.epam.big_data.lab.mappers.CityAndRegionMapper;
 import com.epam.big_data.lab.mappers.DataMapper;
+import com.epam.big_data.lab.utils.CustomKey;
 import com.epam.big_data.lab.utils.FileSystemOperations;
 import com.epam.big_data.lab.utils.HDFSOperations;
 import com.epam.big_data.lab.utils.KeyPartitioner;
@@ -80,7 +81,7 @@ public class AppDriver extends Configured implements Tool {
             }
         }
 
-        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputKeyClass(CustomKey.class);
         job.setMapOutputValueClass(Text.class);
 
         FileInputFormat.addInputPath(job, new Path(hdfsInputFolder));
