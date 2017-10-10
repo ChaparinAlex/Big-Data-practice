@@ -30,12 +30,13 @@ public class DataMapper extends Mapper<LongWritable, Text, CustomKey, Text>{
                 continue;
             }
             String operatingSystemName = UserAgent.parseUserAgentString(sections[4]).getOperatingSystem().getName();
+            context.getCounter("Operating systems", operatingSystemName).increment(1);
             String cityId = sections[7];
             if(!cityId.equals("null")){
-                context.write(new CustomKey(cityId, operatingSystemName), new Text("1"));
+                context.write(new CustomKey(cityId), new Text(operatingSystemName + "+"));
             }else{
                 String regionId = sections[6];
-                context.write(new CustomKey(regionId, operatingSystemName), new Text("1"));
+                context.write(new CustomKey(regionId), new Text(operatingSystemName + "+"));
             }
 
         }

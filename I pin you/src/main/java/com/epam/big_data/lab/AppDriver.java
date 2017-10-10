@@ -2,10 +2,7 @@ package com.epam.big_data.lab;
 
 import com.epam.big_data.lab.mappers.CityAndRegionMapper;
 import com.epam.big_data.lab.mappers.DataMapper;
-import com.epam.big_data.lab.utils.CustomKey;
-import com.epam.big_data.lab.utils.FileSystemOperations;
-import com.epam.big_data.lab.utils.HDFSOperations;
-import com.epam.big_data.lab.utils.KeyPartitioner;
+import com.epam.big_data.lab.utils.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -92,9 +89,11 @@ public class AppDriver extends Configured implements Tool {
         job.setReducerClass(DataReducer.class);
 
         job.setPartitionerClass(KeyPartitioner.class);
+        job.setGroupingComparatorClass(GroupComparator.class);
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
+        job.setNumReduceTasks(5);
 
         return job.waitForCompletion(true) ? 0 : 1;
 

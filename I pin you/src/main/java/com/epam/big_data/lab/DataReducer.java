@@ -19,13 +19,15 @@ public class DataReducer extends Reducer<CustomKey, Text, Text, IntWritable> {
         int quantity = 0;
         while (itr.hasNext()){
             Text value = new Text(itr.next());
-            if(value.getLength() > 1){
+            if(!value.toString().contains("+")){
                 cityName.set(value);
             }else{
                 quantity++;
             }
         }
-        context.write(cityName, new IntWritable(quantity));
+        if(quantity > 0){
+            context.write(cityName, new IntWritable(quantity));
+        }
 
     }
 }

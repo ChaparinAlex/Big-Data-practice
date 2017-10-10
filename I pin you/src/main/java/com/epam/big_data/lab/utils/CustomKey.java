@@ -9,34 +9,27 @@ import java.io.IOException;
 public class CustomKey implements WritableComparable<CustomKey> {
 
     private String cityOrRegionId;
-    private String operatingSystemType;
 
-    public CustomKey() {
+
+    public CustomKey(){
     }
 
-    public CustomKey(String cityOrRegionId, String operatingSystemType) {
+    public CustomKey(String cityOrRegionId) {
         this.cityOrRegionId = cityOrRegionId;
-        this.operatingSystemType = operatingSystemType;
     }
 
     private String getCityOrRegionId() {
         return cityOrRegionId;
     }
 
-    String getOperatingSystemType() {
-        return operatingSystemType;
-    }
-
     @Override
     public void write(DataOutput out) throws IOException {
-        out.writeChars(cityOrRegionId);
-        out.writeChars(operatingSystemType);
+        out.writeUTF(cityOrRegionId);
     }
 
     @Override
     public void readFields(DataInput in) throws IOException {
         cityOrRegionId = in.readLine();
-        operatingSystemType = in.readLine();
     }
 
     @Override
@@ -64,7 +57,7 @@ public class CustomKey implements WritableComparable<CustomKey> {
 
     @Override
     public String toString() {
-        return "CustomKey [cityOrRegionId=" + cityOrRegionId + ", operationSystemType=" + operatingSystemType + "]";
+        return "CustomKey [cityOrRegionId=" + cityOrRegionId + "]";
     }
 
 }

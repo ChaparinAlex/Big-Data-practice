@@ -20,7 +20,7 @@ public class CityAndRegionMapper extends Mapper<LongWritable, Text, CustomKey, T
             String line = st.nextToken().trim();
             String[] sections = line.split("\t");
             if(sections.length == 2){
-                context.write(new CustomKey(sections[0], ""), new Text(sections[1]));
+                context.write(new CustomKey(sections[0]), new Text(sections[1]));
             }
         }
 
