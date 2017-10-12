@@ -1,0 +1,25 @@
+I pin you (auction data processing).
+
+Program should run on Linux with HDFS preinstalled. 
+To start executing please complete following steps:
+1. Build project and get *.jar file.
+2. Put this *.jar file together with input data files into local directory on Linux(must be 9 *.txt-files corresponding to task 
+requirements).
+3. Also put there files dcache_cities.txt and dcache_regions.txt (renamed from city.en.txt and region.en.txt). These files will be 
+added to HDFS as distributed cache.
+4. Go to this directory ("cd"-command via Linux terminal ).
+5. Type and invoke command:
+   5.1. "hadoop jar <jar_file_name>.jar <input_path> <output_path> <dcache_path>" (for custom chosen i/o-directories and 
+   distributed cache folder);
+   5.2. "hadoop jar <jar_file_name>.jar" (i/o-directories and distributed cache folder will be created automatically).
+6. Look at PC monitor and wait for results of MapReduce task (they should be appeared as soon as framework completes its work).
+
+Note: 
+- program uses custom key and partitioner, grouping comparator, combiner, distributed cache, multiple reducers (>5);
+- you needn't copy neither input data files nor distributed cache files manually into HDFS directory;
+- don't worry about clogging your HDFS storage: program deletes output directory before every invoking;
+- input folder will be without changes between application invokings because 
+there are big files;
+- all output data is storing in HDFS corresponding directory; all output data will be substituted with new ones after 
+program runs repeatedly (data rewrites between invokings);
+- program will show results on the screen (first 5 output files).
