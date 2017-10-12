@@ -8,23 +8,23 @@ public class KeyPartitioner extends Partitioner<CustomKey, Text> {
     @Override
     public int getPartition(CustomKey key, Text value, int numPartitions) {
 
-        String valueData = value.toString();
-        if(valueData.contains("+")){
-            if(valueData.contains("Android")) {
-                return 0;
-            }
-            if(valueData.contains("Windows XP")){
-                return 1;
-            }
-            if(valueData.contains("Windows 7")){
-                return 2;
-            }
-            if(valueData.contains("Mac OS X") || valueData.contains("iOS")){
-                return 3;
-            }
-            return 4;
+        String osType = key.getOperatingSystemType().toString();
+        if(osType == null){
+            return (key.getCityOrRegionName().hashCode() & Integer.MAX_VALUE) % numPartitions;
         }
-        return (value.hashCode() & Integer.MAX_VALUE) % numPartitions;
+        if(osType.contains("Android")) {
+            return 0;
+        }
+        if(osType.contains("Windows XP")){
+            return 1;
+        }
+        if(osType.contains("Windows 7")){
+            return 2;
+        }
+        if(osType.contains("Mac OS X") || osType.contains("iOS")){
+            return 3;
+        }
+        return 4;
 
     }
 

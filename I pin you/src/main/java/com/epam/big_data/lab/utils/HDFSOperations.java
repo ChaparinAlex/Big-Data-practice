@@ -7,6 +7,7 @@ import org.apache.hadoop.fs.Path;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,20 +26,24 @@ public class HDFSOperations {
         homeDir = hdfs.getHomeDirectory();
     }
 
-    public void setUp(Path hdfsInputFolderPath, Path hdfsOutputFolderPath) throws IOException {
+    public void setUp(Path hdfsInputFolderPath, Path hdfsOutputFolderPath, Path hdfsDCacheFolderPath) throws IOException {
         if(folderOrFileExists(hdfsOutputFolderPath)){
             deleteDirectory(hdfsOutputFolderPath);
         }
-        copyFilesToHdfs(hdfsInputFolderPath);
+        copyInputDataFilesToHdfs(hdfsInputFolderPath);
+        if(!folderOrFileExists(hdfsDCacheFolderPath)){
+            createDirectory(hdfsDCacheFolderPath);
+        }
+        copyDCacheFilesToHdfs(hdfsDCacheFolderPath);
     }
 
-    public List<String> getAllFileNamesFromDirectory(Path pathToDirectory) throws IOException {
-        List<String> fileList = new ArrayList<>();
+    public List<Path> getAllFilesFromDirectory(Path pathToDirectory) throws IOException, URISyntaxException {
+        List<Path> pathList = new ArrayList<>();
         FileStatus[] fileStatus = hdfs.listStatus(pathToDirectory);
         for(FileStatus status : fileStatus){
-            fileList.add(status.getPath().getName());
+            pathList.add(status.getPath());
         }
-        return fileList;
+        return pathList;
     }
 
     public String getHdfsHomeFolder() throws IOException {
@@ -53,7 +58,11 @@ public class HDFSOperations {
         return hdfs.exists(path);
     }
 
-    private void copyFilesToHdfs(Path newFolderPath) throws IOException {
+    private void createDirectory(Path pathToDirectory) throws IOException {
+        hdfs.mkdirs(pathToDirectory);
+    }
+
+    private void copyInputDataFilesToHdfs(Path newFolderPath) throws IOException {
 
         Path localDirectory = new Path(FileSystemOperations.getCurrentDirectory());
         List<File> fileList = FileSystemOperations.getAllFiles(localDirectory.toString());
@@ -61,13 +70,32 @@ public class HDFSOperations {
             return;
         }
         for(File file : fileList){
-            if(file.getName().endsWith(".jar")){
+            if(file.getName().endsWith(".jar") || file.getName().contains("dcache")){
                 continue;
             }
             Path hdfsFilePath = new Path(newFolderPath + "/" + file.getName());
             if(!folderOrFileExists(hdfsFilePath)){
                 hdfs.copyFromLocalFile(new Path(file.getCanonicalPath()), hdfsFilePath);
             }
+        }
+
+    }
+
+    private void copyDCacheFilesToHdfs(Path newFolderPath) throws IOException {
+
+        Path localDirectory = new Path(FileSystemOperations.getCurrentDirectory());
+        List<File> fileList = FileSystemOperations.getAllFiles(localDirectory.toString());
+        if(fileList == null){
+            return;
+        }
+        for(File file : fileList){
+            if(file.getName().contains("dcache")){
+                Path hdfsDCacheFilePath = new Path(newFolderPath + "/" + file.getName());
+                if(!folderOrFileExists(hdfsDCacheFilePath)){
+                    hdfs.copyFromLocalFile(new Path(file.getCanonicalPath()), hdfsDCacheFilePath);
+                }
+            }
+
         }
 
     }

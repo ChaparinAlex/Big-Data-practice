@@ -10,23 +10,17 @@ import java.util.Iterator;
 
 public class DataReducer extends Reducer<CustomKey, Text, Text, IntWritable> {
 
-    private Text cityName = new Text();
-
     @Override
-    protected void reduce(CustomKey key, Iterable<Text> values, Reducer<CustomKey, Text, Text, IntWritable>.Context context)
+    protected void reduce(CustomKey key, Iterable<Text> values,
+                          Reducer<CustomKey, Text, Text, IntWritable>.Context context)
                                                                              throws IOException, InterruptedException {
         Iterator<Text> itr = values.iterator();
-        int quantity = 0;
+        int sum = 0;
         while (itr.hasNext()){
-            Text value = new Text(itr.next());
-            if(!value.toString().contains("+")){
-                cityName.set(value);
-            }else{
-                quantity++;
-            }
+            sum += Integer.parseInt(itr.next().toString());
         }
-        if(quantity > 0){
-            context.write(cityName, new IntWritable(quantity));
+        if(sum > 0){
+            context.write(new Text(key.getCityOrRegionName()), new IntWritable(sum));
         }
 
     }

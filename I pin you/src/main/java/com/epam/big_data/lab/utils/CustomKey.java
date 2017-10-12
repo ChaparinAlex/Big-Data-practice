@@ -1,5 +1,6 @@
 package com.epam.big_data.lab.utils;
 
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
@@ -8,56 +9,69 @@ import java.io.IOException;
 
 public class CustomKey implements WritableComparable<CustomKey> {
 
-    private String cityOrRegionId;
+    private Text cityOrRegionName = new Text();
+    private Text operatingSystemType = new Text();
 
 
-    public CustomKey(){
+    public CustomKey() {
     }
 
-    public CustomKey(String cityOrRegionId) {
-        this.cityOrRegionId = cityOrRegionId;
+    public CustomKey(Text cityOrRegionName, Text operatingSystemType) {
+        this.cityOrRegionName = cityOrRegionName;
+        this.operatingSystemType = operatingSystemType;
     }
 
-    private String getCityOrRegionId() {
-        return cityOrRegionId;
+    public Text getCityOrRegionName() {
+        return cityOrRegionName;
+    }
+
+    public Text getOperatingSystemType() {
+        return operatingSystemType;
     }
 
     @Override
     public void write(DataOutput out) throws IOException {
-        out.writeUTF(cityOrRegionId);
+        cityOrRegionName.write(out);
+        operatingSystemType.write(out);
     }
 
     @Override
     public void readFields(DataInput in) throws IOException {
-        cityOrRegionId = in.readLine();
+        cityOrRegionName.readFields(in);
+        operatingSystemType.readFields(in);
     }
-
     @Override
     public int hashCode() {
-        return cityOrRegionId == null ? 0 : cityOrRegionId.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((cityOrRegionName == null) ? 0 : cityOrRegionName.hashCode());
+        result = prime * result + ((operatingSystemType == null) ? 0 : operatingSystemType.hashCode());
+        return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        CustomKey other = (CustomKey) obj;
-        return (cityOrRegionId != null || other.cityOrRegionId == null) && cityOrRegionId != null
-                && cityOrRegionId.equals(other.cityOrRegionId);
+   @Override
+    public boolean equals(Object o){
+        if(o instanceof CustomKey){
+            CustomKey ck = (CustomKey) o;
+            return cityOrRegionName.equals(ck.getCityOrRegionName()) &&
+                    operatingSystemType.equals(ck.getOperatingSystemType());
+        }
+        return false;
     }
 
     @Override
     public int compareTo(CustomKey o) {
-        return cityOrRegionId.compareTo(o.getCityOrRegionId());
+        int returnValue = cityOrRegionName.compareTo(o.getCityOrRegionName());
+        if (returnValue != 0) {
+            return returnValue;
+        }
+        return operatingSystemType.compareTo(o.getOperatingSystemType());
     }
 
     @Override
     public String toString() {
-        return "CustomKey [cityOrRegionId=" + cityOrRegionId + "]";
+        return "CustomKey [cityOrRegionId=" + cityOrRegionName.toString() +
+                ", operatingSystemType=" + operatingSystemType.toString() + "]";
     }
 
 }
